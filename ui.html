@@ -1,0 +1,22 @@
+<p><label><input type="checkbox" id="retina" checked="checked"> Retina</label></p>
+<p>
+  <select id="fillScale">
+    <option value="FIT" selected="selected">Fit</option>
+    <option value="FILL">Fill</option>
+  </select>
+</p>
+<button id="fill">Fill</button> or <button id="unfill">Unfill</button>
+
+<script>
+
+document.getElementById('fill').onclick = () => {
+  const retina = document.getElementById('retina').checked
+  const fillScale = document.getElementById('fillScale').value
+  parent.postMessage({ pluginMessage: { type: 'fill', retina, fillScale } }, '*')
+}
+
+document.getElementById('unfill').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'unfill' } }, '*')
+}
+
+</script>
