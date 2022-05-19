@@ -5,18 +5,18 @@
     <option value="FILL">Fill</option>
   </select>
 </p>
-<button id="fill">Fill</button> or <button id="unfill">Unfill</button>
+<button id="optimize">Optimize</button> or <button id="revert">Revert</button>
 
 <script>
 
-document.getElementById('fill').onclick = () => {
+document.getElementById('optimize').onclick = () => {
   const retina = document.getElementById('retina').checked
   const fillScale = document.getElementById('fillScale').value
-  parent.postMessage({ pluginMessage: { type: 'fill', retina, fillScale } }, '*')
+  parent.postMessage({ pluginMessage: { type: 'optimize', retina, fillScale } }, '*')
 }
 
-document.getElementById('unfill').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'unfill' } }, '*')
+document.getElementById('revert').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'revert' } }, '*')
 }
 
 </script>

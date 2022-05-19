@@ -1,7 +1,7 @@
 figma.showUI(__html__);
 const allowedNodes = ['FRAME', 'COMPONENT'];
 figma.ui.onmessage = msg => {
-    if (msg.type === 'fill') {
+    if (msg.type === 'optimize') {
         for (const node of figma.currentPage.selection) {
             if (allowedNodes.includes(node.type)) {
                 node.exportAsync({ format: 'PNG', constraint: { type: 'SCALE', value: msg.retina ? 2 : 1 } })
@@ -17,7 +17,7 @@ figma.ui.onmessage = msg => {
             }
         }
     }
-    if (msg.type === 'unfill') {
+    if (msg.type === 'revert') {
         for (const node of figma.currentPage.selection) {
             if (allowedNodes.includes(node.type)) {
                 node.fills = [];
