@@ -1,22 +1,142 @@
-<p><label><input type="checkbox" id="retina" checked="checked"> Retina</label></p>
-<p>
-  <select id="fillScale">
-    <option value="FIT" selected="selected">Fit</option>
-    <option value="FILL">Fill</option>
-  </select>
-</p>
-<button id="optimize">Optimize</button> or <button id="revert">Revert</button>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/thomas-lowry/figma-plugin-ds/dist/figma-plugin-ds.css">
+<style type="text/css">
+  body {
+    padding: 8px;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: normal;
+    align-items: normal;
+    align-content: normal;
+    padding-bottom: 8px;
+  }
+
+  .select {
+    width: 50%;
+    margin-right: 8px;
+  }
+
+  .button {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .col:nth-child(1) {
+    display: block;
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: auto;
+    align-self: auto;
+    order: 0;
+  }
+
+  .col:nth-child(2) {
+    display: block;
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: auto;
+    align-self: auto;
+    order: 0;
+  }
+</style>
+
+<div class="row">
+  <div class="col select">
+    <div class="label">Resolution</div>
+    <select id="scale" class="select-menu">
+      <option value="0.5">0.5x</option>
+      <option value="0.75">0.75x</option>
+      <option value="1" selected="selected">1x</option>
+      <option value="1.5">1.5x</option>
+      <option value="2">2x</option>
+      <option value="3">3x</option>
+      <option value="4">4x</option>
+    </select>
+  </div>
+  <div class="col select">
+    <div class="label">Fill Scale</div>
+    <select id="fillScale" class="select-menu">
+      <option value="FIT" selected="selected">Fit</option>
+      <option value="FILL">Fill</option>
+    </select>
+  </div>
+</div>
+
+<div class="row">
+  <button id="optimize" class='button button--primary'>Optimize</button>  
+</div>
+
+<div class="row">
+  <button id="revert" class='button button--secondary'>Revert</button>
+</div>
+
+<p id="progress" class="label"><span id="progress_current">0</span>&nbsp;of&nbsp;<span id="progress_total">0</span></p>
+<p id="done" class="label">Done with <span id="done_count">0</span>&nbsp;frames,&nbsp;<span id="skipped_count">0</span>&nbsp;skipped</p>
+
+<script src="https://cdn.jsdelivr.net/gh/thomas-lowry/figma-plugin-ds/dist/iife/figma-plugin-ds.js"></script>
 
 <script>
 
+const progress = document.getElementById('progress');
+const done = document.getElementById('done');
+const progress_current = document.getElementById('progress_current');
+const progress_total = document.getElementById('progress_total');
+const done_count = document.getElementById('done_count');
+const skipped_count = document.getElementById('skipped_count');
+
+selectMenu.init();
+
+progress.style.visibility = 'hidden';
+done.style.visibility = 'hidden';
+
 document.getElementById('optimize').onclick = () => {
-  const retina = document.getElementById('retina').checked
+  const scale = document.getElementById('scale').value
   const fillScale = document.getElementById('fillScale').value
-  parent.postMessage({ pluginMessage: { type: 'optimize', retina, fillScale } }, '*')
+  parent.postMessage({ pluginMessage: { type: 'optimize', scale: parseInt(scale), fillScale } }, '*')
 }
 
 document.getElementById('revert').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'revert' } }, '*')
+}
+
+window.onmessage = async (event) => {
+
+  if(event.data.pluginMessage){
+
+    let msg = event.data.pluginMessage;
+
+    if (msg.function === "start") {
+
+      done.style.visibility = 'hidden';
+      progress.style.visibility = 'visible';
+
+      progress_total.innerHTML = msg.total
+      progress_current.innerHTML = 0
+
+    }
+
+    if (msg.function === "progress") {
+
+      progress_current.innerHTML = msg.current
+
+    }
+
+    if (msg.function === "done") {
+
+      progress.style.visibility = 'hidden';
+      done.style.visibility = 'visible';
+      
+      done_count.innerHTML = msg.done
+      skipped_count.innerHTML = msg.skipped
+
+    }
+
+  }
+
 }
 
 </script>
